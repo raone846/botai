@@ -11,39 +11,75 @@ function Chatbox() {
   const [chatHistory, setChatHistory] = useState([]);
 
   const handleSearch = () => {
-
     const currentTime = new Intl.DateTimeFormat('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,
     }).format(new Date());
-
+    
     if (userInput.trim() === '') {
       setChatHistory((prev) => [
         ...prev,
-        { person: 'User', msg: 'Please enter a question.', time: currentTime },
+        {
+          id: new Date().getTime(), // Unique ID based on the timestamp
+          person: 'User',
+          msg: 'Please enter a question.',
+          time: currentTime,
+        },
       ]);
       return;
     }
-
+    
     // Search the JSON data
     const match = qaData.find((item) =>
       item.question.toLowerCase() === userInput.toLowerCase()
     );
-
+    
     const botResponse = match
       ? match.response
       : 'Sorry, I don’t have an answer to that question.';
-
+    
     // Add user input and bot response to chat history
-    setChatHistory((prev) => [
-      ...prev,
-      { person: 'You', msg: userInput, time: currentTime },
-      { person: 'Soul AI', msg: botResponse, time: currentTime },
-    ]);
-
+    const newChatHistory = [
+      { id: new Date().getTime(), person: 'You', msg: userInput, time: currentTime },
+      { id: new Date().getTime() + 1, person: 'Soul AI', msg: botResponse, time: currentTime },
+    ];
+    
+    setChatHistory((prev) => [...prev, ...newChatHistory]);
+    
+    // Save the new chat history (question + response) to localStorage
+    const storedHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+    const updatedHistory = [...storedHistory, ...newChatHistory];
+    
+    localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+    
     setUserInput(''); // Clear the input field
-  };  
+  };
+  
+
+  // Function to update chat history with feedback and rating
+  // In Chatbox component
+  const updateChatHistory = (updatedChat, id) => {
+    // Check if updatedChat contains feedback and rating
+    const isFeedbackProvided = updatedChat.rating !== undefined && updatedChat.feedback !== '';
+    
+    // Update only the chat message with the matching ID
+    setChatHistory((prev) => {
+      return prev.map((chat) =>
+        chat.id === id ? { ...chat, ...updatedChat } : chat
+      );
+    });
+  
+    // Save to localStorage only if feedback or rating is provided for the specific message
+    if (isFeedbackProvided) {
+      const storedHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+      const updatedHistory = storedHistory.map((chat) =>
+        chat.id === id ? { ...chat, ...updatedChat } : chat
+      );
+      localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+    }
+  };
+  
 
   return (
     <Box
@@ -133,8 +169,15 @@ function Chatbox() {
             gap: 2,
           }}
         >
-          {chatHistory.map((chat, index) => (
-            <Card key={index} person={chat.person} msg={chat.msg} time={chat.time} />
+          {chatHistory.map((chat) => (
+            <Card
+              key={chat.id} // Ensure each Card has a unique key
+              id={chat.id} // Pass the unique ID
+              person={chat.person}
+              msg={chat.msg}
+              time={chat.time}
+              updateChatHistory={updateChatHistory} // Pass the update function
+            />
           ))}
         </Box>
       )}
