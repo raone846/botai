@@ -4,8 +4,9 @@ import { Button } from '@mui/material';
 import Chat_Logo from '../assets/Chat_Logo.png';
 import ChatCard from './ChatCard';
 import Card from './Card';
+import SavedCard from './SavedCard';
 
-function Chatbox({ chatHistory, handleSearch, handleSaveChat, updateChatHistory }) {
+function Chatbox({ chatHistory, handleSearch, handleSaveChat, updateChatHistory, pastConv }) {
   const [userInput, setUserInput] = useState('');
 
   return (
@@ -33,61 +34,77 @@ function Chatbox({ chatHistory, handleSearch, handleSaveChat, updateChatHistory 
         </Box>
       </Box>
 
-      {chatHistory.length === 0 ? (
-        <Box sx={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <label style={{ fontSize: '28px', fontWeight: '500' }}>
-            How Can I Help You Today?
-          </label>
-          <Box
-            sx={{
-              width: '65.3px',
-              height: '69px',
-              borderRadius: '50%',
-              boxShadow: '0px 4px 4px 0px #00000040',
-              overflow: 'hidden',
-              margin: '16px 0',
-            }}
-          >
-            <Box
-              component="img"
-              src={Chat_Logo}
-              alt="logo"
-              sx={{
-                width: '250%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            />
-          </Box>
-          <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', gap: '12px', marginTop: '20px' }}>
-            <ChatCard text="Hi, what is the weather" subText="Get immediate AI generated response" />
-            <ChatCard text="Hi, what is my location" subText="Get immediate AI generated response" />
-            <ChatCard text="Hi, what is the temperature" subText="Get immediate AI generated response" />
-            <ChatCard text="Hi, how are you" subText="Get immediate AI generated response" />
-          </Box>
+      {pastConv ? (
+        // If pastConv is true, display SavedChat
+        <Box sx={{
+          flex: 1,
+          overflowY: 'auto',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}>
+          <SavedCard />
         </Box>
       ) : (
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: 'auto',
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          {chatHistory.map((chat) => (
-            <Card
-              key={chat.id}
-              id={chat.id}
-              person={chat.person}
-              msg={chat.msg}
-              time={chat.time}
-              updateChatHistory={updateChatHistory}
-            />
-          ))}
-        </Box>
+        // If chatHistory is empty, show the initial prompts
+        chatHistory.length === 0 ? (
+          <Box sx={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <label style={{ fontSize: '28px', fontWeight: '500' }}>
+              How Can I Help You Today?
+            </label>
+            <Box
+              sx={{
+                width: '65.3px',
+                height: '69px',
+                borderRadius: '50%',
+                boxShadow: '0px 4px 4px 0px #00000040',
+                overflow: 'hidden',
+                margin: '16px 0',
+              }}
+            >
+              <Box
+                component="img"
+                src={Chat_Logo}
+                alt="logo"
+                sx={{
+                  width: '250%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </Box>
+            <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', gap: '12px', marginTop: '20px' }}>
+              <ChatCard text="Hi, what is the weather" subText="Get immediate AI generated response" />
+              <ChatCard text="Hi, what is my location" subText="Get immediate AI generated response" />
+              <ChatCard text="Hi, what is the temperature" subText="Get immediate AI generated response" />
+              <ChatCard text="Hi, how are you" subText="Get immediate AI generated response" />
+            </Box>
+          </Box>
+        ) : (
+          // Otherwise, show the chat history
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            {chatHistory.map((chat) => (
+              <Card
+                key={chat.id}
+                id={chat.id}
+                person={chat.person}
+                msg={chat.msg}
+                time={chat.time}
+                updateChatHistory={updateChatHistory}
+              />
+            ))}
+          </Box>
+        )
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, width: '97%', p: 2, borderTop: '1px solid #ccc' }}>

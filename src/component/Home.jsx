@@ -11,6 +11,11 @@ function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [savedChats, setSavedChats] = useState([]);
+  const [pastConv, setPastConv] = useState(false);
+
+  const handlePastChat = () => {
+    setPastConv((prevState) => !prevState);
+  };
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -118,7 +123,7 @@ function Home() {
           onClick={toggleDrawer(false)}
           onKeyDown={toggleDrawer(false)}
         >
-          <SavedChat handleSaveChat={handleSaveChat} />
+          <SavedChat handleSaveChat={handleSaveChat} handlePastChat={handlePastChat} />
         </Box>
       </Drawer>
 
@@ -130,7 +135,7 @@ function Home() {
           overflowY: 'auto',
         }}
       >
-        <SavedChat handleSaveChat={handleSaveChat} />
+        <SavedChat handleSaveChat={handleSaveChat} handlePastChat={handlePastChat} />
       </Box>
 
       <Box
@@ -144,6 +149,7 @@ function Home() {
           handleSearch={handleSearch}
           handleSaveChat={handleSaveChat}
           updateChatHistory={updateChatHistory}
+          pastConv={pastConv}
         />
       </Box>
     </Box>

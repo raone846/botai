@@ -4,7 +4,7 @@ import logo from '../assets/Chat_Logo.png';
 import NewChat from '../assets/NewChat.png';
 import { Button } from '@mui/material';
 
-function SavedChat({handleSaveChat}) {
+function SavedChat({handleSaveChat, handlePastChat}) {
   return (
     <Box
       sx={{
@@ -66,6 +66,7 @@ function SavedChat({handleSaveChat}) {
       </Box>
 
       <Button
+        onClick={() => handlePastChat()}
         sx={{
           height: '39px',
           width: '80%',
