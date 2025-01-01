@@ -64,6 +64,8 @@ function Card({ id, person, msg, time, updateChatHistory }) {
         display: 'flex',
         alignItems: 'flex-start',
         gap: '12px',
+        boxShadow: '-4px 4px 15px 0px #0000001A'
+
       }}
     >
       {/* Avatar */}
@@ -74,6 +76,7 @@ function Card({ id, person, msg, time, updateChatHistory }) {
           borderRadius: '50%',
           boxShadow: '0px 4px 4px 0px #00000040',
           overflow: 'hidden',
+          flexShrink: 0,
         }}
       >
         <Box

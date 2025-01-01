@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import { Button } from '@mui/material';
 import Chat_Logo from '../assets/Chat_Logo.png';
@@ -6,8 +6,8 @@ import ChatCard from './ChatCard';
 import Card from './Card';
 import SavedCard from './SavedCard';
 
-function Chatbox({ chatHistory, handleSearch, handleSaveChat, updateChatHistory, pastConv }) {
-  const [userInput, setUserInput] = useState('');
+function Chatbox({ chatHistory, handleSearch, handleSaveChat, updateChatHistory, pastConv, userInput, setUserInput }) {
+  
 
   return (
     <Box
@@ -44,6 +44,7 @@ function Chatbox({ chatHistory, handleSearch, handleSaveChat, updateChatHistory,
           flexDirection: 'column',
           gap: 2,
         }}>
+          <label style={{fontSize:"28px", fontWeight:"400"}}>Conversation History</label>
           <SavedCard />
         </Box>
       ) : (

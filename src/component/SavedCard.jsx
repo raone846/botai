@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Bot from '../assets/Chat_Logo.png';
 import Avatar from '../assets/Avtar.png';
 import thumb from '../assets/thumb.png';
+import Rating from '@mui/material/Rating';
 
 function SavedCard() {
   const [savedChats, setSavedChats] = useState([]);
@@ -12,10 +13,17 @@ function SavedCard() {
     setSavedChats(storedChats); // Keep the nested structure
   }, []);
 
+  // Handle rating change
+  const handleRatingChange = (arrayIndex, chatIndex, newRating) => {
+    const updatedChats = [...savedChats];
+    updatedChats[arrayIndex][chatIndex].rating = newRating; // Update rating in the specific chat
+    setSavedChats(updatedChats);
+    localStorage.setItem('savedChats', JSON.stringify(updatedChats)); // Save changes to localStorage
+  };
+
   return (
     <Box
       sx={{
-        background: '#D7C7F421',
         borderRadius: '10px',
         p: 2,
         mb: 2,
@@ -23,14 +31,17 @@ function SavedCard() {
         flexDirection: 'column',
         gap: '12px',
       }}
-    > 
-      <label>Today's Chats</label>
+    >
+      <label style={{ fontSize: '20px', fontWeight: '400', textAlign: 'left' }}>
+        Today's Chats
+      </label>
       {savedChats.map((chatArray, arrayIndex) => (
         <Box
           key={arrayIndex}
           sx={{
             background: 'linear-gradient(90deg, #BFACE2 0%, #D7C7F4 100%)',
             borderRadius: '8px',
+            boxShadow: '-4px 4px 15px 0px #0000001A',
             p: 2,
             mb: 2,
           }}
@@ -102,12 +113,71 @@ function SavedCard() {
                         style={{
                           fontSize: '12px',
                           fontWeight: '400',
-                          color: ' #0000009E',
+                          color: '#0000009E',
                         }}
                       >
                         {chat.time}
                       </label>
+                      {/* Thumbs up/down or Rating */}
+                      {chat.rating ? (
+                        <Rating
+                          name={`rating-${arrayIndex}-${chatIndex}`}
+                          value={chat.rating}
+                          readOnly
+                          max={5}
+                          sx={{ 
+                            ml: 2,
+                            '& .MuiRating-iconFilled': {
+                              color: '#000', // Gold for filled stars
+                            },
+                            '& .MuiRating-iconEmpty': {
+                              color: '#000', // Grey for empty stars
+                            },
+                          }}
+                        />
+                      ) : (
+                        chat.person === 'Soul AI' && (
+                          <Box>
+                            <img
+                              src={thumb}
+                              alt="thumb up"
+                              style={{
+                                cursor: 'pointer',
+                                width: '20px',
+                                height: '20px',
+                                margin: '6px',
+                              }}
+                            />
+                            <img
+                              src={thumb}
+                              alt="thumb down"
+                              style={{
+                                cursor: 'pointer',
+                                width: '20px',
+                                height: '20px',
+                                margin: '6px',
+                                transform: 'rotate(180deg)',
+                              }}
+                            />
+                          </Box>
+                        )
+                      )}
                     </Box>
+                  )}
+
+                  {/* Feedback */}
+                  {chat.feedback && (
+                    <label
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        display: 'block',
+                        textAlign: 'left',
+                        marginTop: '8px',
+                      }}
+                    >
+                      Feedback: <span style={{ fontWeight: '400' }}>{chat.feedback}</span>
+                    </label>
                   )}
                 </Box>
               </Box>

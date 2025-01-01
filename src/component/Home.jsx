@@ -12,6 +12,7 @@ function Home() {
   const [chatHistory, setChatHistory] = useState([]);
   const [savedChats, setSavedChats] = useState([]);
   const [pastConv, setPastConv] = useState(false);
+  const [userInput, setUserInput] = useState('');
 
   const handlePastChat = () => {
     setPastConv((prevState) => !prevState);
@@ -30,7 +31,7 @@ function Home() {
       minute: '2-digit',
       hour12: true,
     }).format(new Date());
-
+  
     if (userInput.trim() === '') {
       setChatHistory((prev) => [
         ...prev,
@@ -43,26 +44,29 @@ function Home() {
       ]);
       return;
     }
-
+  
     const match = qaData.find((item) =>
-      item.question.toLowerCase() === userInput.toLowerCase()
+      item.question.toLowerCase().includes(userInput.trim().toLowerCase())
     );
-
+  
     const botResponse = match
       ? match.response
-      : 'Sorry, I don’t have an answer to that question.';
-
+      : 'As an AI Language Model, I don’t have the details';
+  
     const newChatHistory = [
       { id: new Date().getTime(), person: 'You', msg: userInput, time: currentTime },
       { id: new Date().getTime() + 1, person: 'Soul AI', msg: botResponse, time: currentTime },
     ];
-
+  
     setChatHistory((prev) => [...prev, ...newChatHistory]);
-
+  
     const storedHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
     const updatedHistory = [...storedHistory, ...newChatHistory];
     localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+
+    setUserInput('');
   };
+  
 
   const handleSaveChat = () => {
     if (chatHistory.length === 0) return;
@@ -150,6 +154,8 @@ function Home() {
           handleSaveChat={handleSaveChat}
           updateChatHistory={updateChatHistory}
           pastConv={pastConv}
+          userInput={userInput}
+          setUserInput={setUserInput}
         />
       </Box>
     </Box>
